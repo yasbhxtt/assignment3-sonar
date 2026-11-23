@@ -150,6 +150,17 @@ TEST(ThreadPoolTest, RunsEveryQueuedTaskBeforeShuttingDown) {
 	EXPECT_EQ(done.load(), 200);
 }
 
+TEST(ThreadPoolTest, PoolBuiltWithZeroThreadsStillRunsTasks) {
+	// Independently tested risk: a pool asked for 0 threads used to accept tasks
+	// and never run them, so anything waiting for a result would wait forever.
+	ThreadPool pool(0);
+	std::promise<int> answer;
+	std::future<int> result = answer.get_future();
+	pool.enqueue([&answer] { answer.set_value(42); });
+	ASSERT_EQ(result.wait_for(std::chrono::seconds(2)), std::future_status::ready);
+	EXPECT_EQ(result.get(), 42);
+}
+
 // ---------- the real Hamlet.txt (the test runs inside the Assignment3 folder) ----------
 
 TEST(HamletFile, LoadsAndThreadedCountsMatchReference) {

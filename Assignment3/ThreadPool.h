@@ -7,13 +7,16 @@
 #include <condition_variable>
 #include <functional>
 #include <atomic>
+#include <algorithm>
 
 // A pool of worker threads that are created once and reused for every task.
 class ThreadPool {
 public:
 	// creates numThreads worker threads, each one running workerThread()
+	// (a pool of 0 threads would accept tasks and never run them, so at least one worker is always created)
 	explicit ThreadPool(size_t numThreads) : stop(false) {
-		for (size_t i = 0; i < numThreads; i++) {
+		const size_t workers = std::max<size_t>(1, numThreads);
+		for (size_t i = 0; i < workers; i++) {
 			threads.emplace_back(&ThreadPool::workerThread, this);
 		}
 	}
