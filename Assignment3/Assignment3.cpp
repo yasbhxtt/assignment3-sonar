@@ -61,11 +61,11 @@ double average_latency_ms(const vector<Clock::time_point>& handed_out, const vec
 }
 
 bool is_letter(char c) {
-	return isalpha((unsigned char)c) != 0;
+	return isalpha(static_cast<unsigned char>(c)) != 0;
 }
 
 bool is_not_space(char c) {
-	return isspace((unsigned char)c) == 0;
+	return isspace(static_cast<unsigned char>(c)) == 0;
 }
 
 // Loads the whole file into one string. The file must be inside the project folder,
@@ -130,7 +130,7 @@ void check_word(const string& text, size_t start, size_t length, Counts& counts)
 
 		bool same = true;
 		for (size_t k = 0; k < length; k++) {
-			if (tolower((unsigned char)text[start + k]) != target[k]) {
+			if (tolower(static_cast<unsigned char>(text[start + k])) != target[k]) {
 				same = false;
 				break;
 			}
@@ -242,7 +242,7 @@ long long count_total_words_with_pool(const string& text, ThreadPool& pool, size
 	vector<Clock::time_point> finished(numChunks);   // when each chunk's result was ready
 
 	// the latch is shared with the tasks so it stays alive until the last worker is done with it
-	shared_ptr<latch> all_done = make_shared<latch>((ptrdiff_t)numChunks);
+	shared_ptr<latch> all_done = make_shared<latch>(static_cast<ptrdiff_t>(numChunks));
 
 	for (size_t i = 0; i < numChunks; i++) {
 		size_t begin = cuts[i];
@@ -367,4 +367,6 @@ int main() {
 	Timing pool_time_one = measure_pool(text, pool_one);
 	Timing pool_time_many = measure_pool(text, pool_many);
 	print_report("Requirement 2: total word count with the ThreadPool (" + to_string(chunks) + " chunks)", "worker", numThreads, pool_time_one, pool_time_many);
+
+	return 0;
 }
