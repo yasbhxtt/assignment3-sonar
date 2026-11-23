@@ -1,0 +1,10 @@
+.env
+build/
+coverage.xml
+*.gcda
+*.gcno
+.vs/
+x64/
+Debug/
+Release/
+*.user
