@@ -25,7 +25,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build cmake
-          pip install gcovr
+          pip install --require-hashes --only-binary :all: -r requirements-ci.txt
 
       - name: Configure (CMake, with coverage)
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_COVERAGE=ON
@@ -40,6 +40,6 @@ jobs:
         run: gcovr --root . --object-directory build --filter 'Assignment3/' --gcov-ignore-parse-errors=negative_hits.warn_once_per_file --sonarqube coverage.xml
 
       - name: SonarQube Cloud scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
